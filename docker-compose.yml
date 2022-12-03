@@ -1,0 +1,13 @@
+---
+version: "3.8"
+services:
+  terraform:
+    working_dir: "/usr/src/app"
+    image: "hashicorp/terraform:latest"
+    volumes:
+      - "./tf-iac/:/usr/src/app/"
+    environment:
+      TF_TOKEN_app_terraform_io: "${TF_TOKEN_app_terraform_io}"
+      AWS_REGION: "${AWS_REGION:-us-west-2}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:?Please provide an `AWS_ACCESS_KEY_ID`.}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:?Please provide an `AWS_SECRET_ACCESS_KEY`.}"
