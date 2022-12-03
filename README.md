@@ -2,7 +2,7 @@
 
 Terraform module to deploy a given number of FTDv appliances in AWS in a single Availability Zone
 
-> NOTE: This is a fork that's been updated from GH@ `amansin0504` to run in Docker and create all the resources necessary.
+> NOTE: This is a fork that's been updated from GH@ [amansin0504](https://github.com/amansin0504/aws-singleazftd-terraform) to run in Docker and create all the resources necessary.
 
 ## Finding AMI
 
