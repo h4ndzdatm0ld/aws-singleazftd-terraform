@@ -1,16 +1,41 @@
 #################################
 # Cloud Provider details: AWS
 #################################
+# terraform {
+#   cloud {
+#     organization = "dev-knot"
+#     workspaces {
+#       name = ""
+#     }
+#   }
+#   required_providers {
+#     aws = {
+#       source  = "hashicorp/aws"
+#       version = "~> 4.0"
+#     }
+#   }
+# }
+
 provider "aws" {
-  profile     = "default"
   region      = var.region
 }
 
 #################################
+# Create VPC
+#################################
+resource "aws_vpc" "main" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "default"
+
+  tags = {
+    Name = "main"
+  }
+}
+#################################
 # Create outside firewall subnets
 #################################
 resource "aws_subnet" "outside" {
-  vpc_id                  = var.vpcid
+  vpc_id                  = aws_vpc.main.id
   cidr_block              = var.outsubnet
   availability_zone       = var.azone
   map_public_ip_on_launch = true
@@ -23,7 +48,7 @@ resource "aws_subnet" "outside" {
 # Create inside firewall subnets
 #################################
 resource "aws_subnet" "inside" {
-  vpc_id                  = var.vpcid
+  vpc_id                  = aws_vpc.main.id
   cidr_block              = var.insubnet
   availability_zone       = var.azone
   map_public_ip_on_launch = false
@@ -36,7 +61,7 @@ resource "aws_subnet" "inside" {
 # Create management firewall subnets
 ####################################
 resource "aws_subnet" "management" {
-  vpc_id                  = var.vpcid
+  vpc_id                  = aws_vpc.main.id
   cidr_block              = var.mgmtsubnet
   availability_zone       = var.azone
   map_public_ip_on_launch = true
@@ -49,7 +74,7 @@ resource "aws_subnet" "management" {
 # Create an internet gateway to give our subnet access to the internet
 ######################################################################
 resource "aws_internet_gateway" "default" {
-  vpc_id = var.vpcid
+  vpc_id = aws_vpc.main.id
   tags = {
     Name = "fwIGW"
   }
@@ -59,7 +84,7 @@ resource "aws_internet_gateway" "default" {
 # Create firewall route table
 #############################
 resource "aws_route_table" "firewall_rt" {
-  vpc_id = var.vpcid
+  vpc_id = aws_vpc.main.id
   tags = {
     Name = "firewallRT"
   }
@@ -96,7 +121,7 @@ resource "aws_route_table_association" "firewallrt_subnet3" {
 resource "aws_security_group" "firewallSG" {
   name        = "firewallSG"
   description = "SG for firewalls"
-  vpc_id      = var.vpcid
+  vpc_id      = aws_vpc.main.id
 
   # Health check access from outside LB
   ingress {
@@ -124,7 +149,7 @@ resource "aws_security_group" "firewallSG" {
 resource "aws_security_group" "mgmtSG" {
   name        = "managementSG"
   description = "SG for management"
-  vpc_id      = var.vpcid
+  vpc_id      = aws_vpc.main.id
 
   # SSH access from anywhere
   ingress {
