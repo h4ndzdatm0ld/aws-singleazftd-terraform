@@ -48,7 +48,7 @@ variable "instance_count" {
 
 variable "instance_type" {
   description = "Instance types"
-  default     = "c4.xlarge"
+  default     = "c5.xlarge"
   type        = string
 }
 
