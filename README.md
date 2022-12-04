@@ -9,9 +9,9 @@ Terraform module to deploy a given number of FTDv appliances in AWS in a single 
 - Create a .env file in your local directory. At a minimum, these variables should be present. The `Docker Compose` file will pick these up through `environment` options.
 
 ```bash
-- AWS_REGION=
-- AWS_ACCESS_KEY_ID=
-- AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
 ```
 
 ## Finding AMI
